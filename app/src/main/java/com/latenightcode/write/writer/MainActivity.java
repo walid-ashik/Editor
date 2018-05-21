@@ -1,149 +1,121 @@
 package com.latenightcode.write.writer;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
+
+import com.latenightcode.write.writer.model.AlertReceiver;
+import com.latenightcode.write.writer.model.TimePickerFragment;
+
+import java.util.Calendar;
 
 import jp.wasabeef.richeditor.RichEditor;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
-    private RichEditor editor;
-    String doc;
-
-    private static final String TAG = "MainActivity";
+    RichEditor richEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editor = findViewById(R.id.editor);
-
-        customizeRichEditor(editor);
-
-
-        findViewById(R.id.show).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doc = editor.getHtml();
-
-                Intent i = new Intent(MainActivity.this, Main2Activity.class);
-                i.putExtra("text", doc);
-                startActivity(i);
-
-            }
-        });
+//        final String document = getIntent().getStringExtra("text");
+//
+//        richEditor  = findViewById(R.id.main2Editor);
+//        richEditor.setHtml(document);
+//
+//        Spanned t = Html.fromHtml(document);
+//        String tv = t.toString();
+//        Toast.makeText(this, tv, Toast.LENGTH_SHORT).show();
 
 
     }
 
-    private void customizeRichEditor(final RichEditor mEditor) {
 
-        final RichEditor richEditor = mEditor;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-        richEditor.setEditorHeight(200);
-        richEditor.setEditorFontSize(18);
-        richEditor.setPadding(10, 10, 10, 10);
-        richEditor.setPlaceholder("Make this day a history...");
-        richEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
-            @Override
-            public void onTextChange(String text) {
-
-            }
-        });
-
-        findViewById(R.id.action_undo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.undo();
-            }
-        });
-
-        findViewById(R.id.action_redo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.redo();
-            }
-        });
-
-        findViewById(R.id.action_bold).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setBold();
-            }
-        });
-        findViewById(R.id.action_italic).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setItalic();
-            }
-        });
-        findViewById(R.id.action_blockquote).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setBlockquote();
-            }
-        });
-        findViewById(R.id.action_underline).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setUnderline();
-            }
-        });
-        findViewById(R.id.action_align_left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setAlignLeft();
-            }
-        });
-        findViewById(R.id.action_align_center).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setAlignCenter();
-            }
-        });
-
-        findViewById(R.id.action_insert_bullets).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setBullets();
-            }
-        });
-
-        findViewById(R.id.action_insert_numbers).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setNumbers();
-            }
-        });
-        findViewById(R.id.action_heading2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setHeading(2);
-            }
-        });
-
-        findViewById(R.id.action_heading3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setHeading(3);
-            }
-        });
-
-        findViewById(R.id.action_heading4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                richEditor.setHeading(4);
-            }
-        });
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.action_alarmTime){
+
+            DialogFragment timePicker = new TimePickerFragment();
+            timePicker.show(getSupportFragmentManager(), "timePicker");
+
+
+            return true;
+        }
+
+        if(id == R.id.action_logout){
+
+            //...TODO change cancel Alarm button from logout to others
+            cancelAlarm();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
 
     }
+
+
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        startAlarm(calendar);
+
+        Toast.makeText(this, hourOfDay + ":" + minute, Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void startAlarm(Calendar calendar) {
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, AlertReceiver.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+    }
+
+    public void cancelAlarm() {
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, AlertReceiver.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        alarmManager.cancel(pendingIntent);
+
+        Toast.makeText(this, "alarm canceled", Toast.LENGTH_SHORT).show();
+    }
+
+
 }
