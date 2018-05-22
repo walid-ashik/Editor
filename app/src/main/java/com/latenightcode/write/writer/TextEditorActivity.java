@@ -1,13 +1,28 @@
 package com.latenightcode.write.writer;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateUtils;
+import android.text.format.Time;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 
+import com.latenightcode.write.writer.Config.Config;
+import com.latenightcode.write.writer.model.AlertReceiver;
+
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import jp.wasabeef.richeditor.RichEditor;
 
@@ -23,7 +38,6 @@ public class TextEditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_editor);
 
-        getSupportActionBar().hide();
 
         editor = findViewById(R.id.editor);
 
@@ -51,6 +65,61 @@ public class TextEditorActivity extends AppCompatActivity {
         return dateFormat.format(calendar);
 
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.text_editor_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.action_alarm_snooze){
+
+            String nextAlarmTime =  new SimpleDateFormat("hh:mm").format(new Date(Calendar.getInstance().getTimeInMillis() + 5 * 60000));
+            //..Todo remove toast
+            Toast.makeText(this, "Next notification will be at " + nextAlarmTime, Toast.LENGTH_SHORT).show();
+
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+
+                    snoozeAlarm();
+
+                }
+            }, 2500);
+
+        }
+
+        if(id == R.id.action_save_icon || id == R.id.action_save_hidden_menu){
+            //...Todo Save writing here
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void snoozeAlarm() {
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, AlertReceiver.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, Config.NOTIFICATION_REQUEST_CODE, intent, 0);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP,
+                Calendar.getInstance().getTimeInMillis() + 5 * 60000, //...start after 5 * 60000 milis = 5 minute
+                pendingIntent);
+
+        finish();
+        System.exit(0);
+    }
+
 
 
     private void customizeRichEditor(final RichEditor mEditor) {
@@ -159,4 +228,6 @@ public class TextEditorActivity extends AppCompatActivity {
         super.onBackPressed();
 
     }
+
+
 }

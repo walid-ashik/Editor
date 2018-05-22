@@ -14,6 +14,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 
+import com.latenightcode.write.writer.Config.Config;
 import com.latenightcode.write.writer.model.AlertReceiver;
 import com.latenightcode.write.writer.model.TimePickerFragment;
 
@@ -98,10 +99,10 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
         Intent intent = new Intent(this, AlertReceiver.class);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, Config.NOTIFICATION_REQUEST_CODE, intent, 0);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-
+        //Repeat every 24 hours
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000, pendingIntent);
     }
 
     public void cancelAlarm() {
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
         Intent intent = new Intent(this, AlertReceiver.class);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, Config.NOTIFICATION_REQUEST_CODE, intent, 0);
 
         alarmManager.cancel(pendingIntent);
 

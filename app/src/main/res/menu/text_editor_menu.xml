@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_alarm_snooze"
+        android:icon="@drawable/ic_alarm_snooze"
+        android:title="Snooze Alarm"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_save_icon"
+        android:icon="@drawable/ic_save"
+        android:title="save_icon"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_save_hidden_menu"
+        android:title="Save" />
+</menu>

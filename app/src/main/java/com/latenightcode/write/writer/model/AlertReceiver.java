@@ -14,7 +14,7 @@ public class AlertReceiver extends BroadcastReceiver {
 
 
         intent = new Intent();
-        intent.setClass(context, TextEditorActivity.class); //Test is a dummy class name where to redirect
+        intent.setClass(context, TextEditorActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
 
