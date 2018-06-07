@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorIconOfTextEditorOption">#585858</color>
+    <color name="colorPrimary">#5376f1</color>
+    <color name="colorPrimaryDark">#4b6de2</color>
+    <color name="colorAccent">#275bdf</color>
+
+    <color name="colorIconOfTextEditorOption">#5376f0</color>
+    <color name="colorIconActionBar">#ffffff</color>
+    <color name="floating_action_button_color">#275bde</color>
 </resources>

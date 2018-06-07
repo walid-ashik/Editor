@@ -11,8 +11,7 @@ public class AlertReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-
+        
         intent = new Intent();
         intent.setClass(context, TextEditorActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

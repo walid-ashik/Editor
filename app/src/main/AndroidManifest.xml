@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TextEditorActivity"></activity>
+        <activity android:name=".TextEditorActivity"
+            android:parentActivityName=".MainActivity"></activity>
 
         <receiver android:name=".model.AlertReceiver"/>
 
